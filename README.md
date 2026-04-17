@@ -3,6 +3,8 @@ Adicionar a Dll da pasta Bin na pasta do executável do projeto e adicionar a pa
 
 ## 📖 Exemplos 
 
+Adicionar no uses uRESTClassD7, uRESTClass.
+
 Requisição GET
 ``` sh
 var
