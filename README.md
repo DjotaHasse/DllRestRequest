@@ -1,4 +1,7 @@
 ## ⚙️ Como Utilizar
+Adicionar a Dll da pasta Bin na pasta do executável do projeto e adicionar a pasta Sources na Library Path do Delphi antigo.
+
+## 📖 Exemplos 
 
 Requisição GET
 ``` sh
