@@ -6,8 +6,10 @@ uses
   uRESTClass, Dialogs, Windows, SysUtils;
 
 type
-  TRESTGet  = function(prHost, prResource: WideString; var prParams: TParams; var prProperties: TProperties): TRESTResponse; stdcall;
-  TRESTPost = function(prHost, prResource: WideString; var prParams: TParams; var prProperties: TProperties; var prBody: TBody): TRESTResponse; stdcall;
+  TRESTGet    = function(prHost, prResource: WideString; var prParams: TParams; var prProperties: TProperties): TRESTResponse; stdcall;
+  TRESTPost   = function(prHost, prResource: WideString; var prParams: TParams; var prProperties: TProperties; var prBody: TBody): TRESTResponse; stdcall;
+  TRESTPut    = function(prHost, prResource: WideString; var prParams: TParams; var prProperties: TProperties; var prBody: TBody): TRESTResponse; stdcall;
+  TRESTDelete = function(prHost, prResource: WideString; var prParams: TParams; var prProperties: TProperties): TRESTResponse; stdcall;
 
   TRESTRequestD7 = class
   private
@@ -29,6 +31,8 @@ type
     procedure AddBody(prValue: WideString; prType: TContentType = ctNone);
     function Get(prURL, prResource: WideString): Boolean;
     function Post(prURL, prResource: WideString): Boolean;
+    function Put(prURL, prResource: WideString): Boolean;
+    function Delete(prURL, prResource: WideString): Boolean;
 
     property Params: TParams            read fParams                    write fParams;
     property Response: TRESTResponse    read fResponse;
@@ -138,6 +142,56 @@ begin
     if Assigned(fPost) then
     begin
       fResponse := fPost(prURL,prResource,fParams,fProperties,fBody);
+      Result := True;
+    end;
+  except
+    on e:Exception do
+      MessageDlg('Erro requisição: '+e.Message,mtError,[mbOK],0);
+  end;
+end;
+
+function TRESTRequestD7.Put(prURL, prResource: WideString): Boolean;
+var
+  fPut: TRESTPut;
+begin
+  Result := False;
+  ClearResponse;
+  if (fHandle = 0) then
+  begin
+    MessageDlg('Erro ao carregar dll RESTRequest!',mtError,[mbOK],0);
+    Exit;
+  end;
+
+  try
+    @fPut := GetProcAddress(fHandle,'Put');
+    if Assigned(fPut) then
+    begin
+      fResponse := fPut(prURL,prResource,fParams,fProperties,fBody);
+      Result := True;
+    end;
+  except
+    on e:Exception do
+      MessageDlg('Erro requisição: '+e.Message,mtError,[mbOK],0);
+  end;
+end;
+
+function TRESTRequestD7.Delete(prURL, prResource: WideString): Boolean;
+var
+  fDelete: TRESTDelete;
+begin
+  Result := False;
+  ClearResponse;
+  if (fHandle = 0) then
+  begin
+    MessageDlg('Erro ao carregar dll RESTRequest!',mtError,[mbOK],0);
+    Exit;
+  end;
+
+  try
+    @fDelete := GetProcAddress(fHandle,'Delete');
+    if Assigned(fDelete) then
+    begin
+      fResponse := fDelete(prURL,prResource,fParams,fProperties);
       Result := True;
     end;
   except
