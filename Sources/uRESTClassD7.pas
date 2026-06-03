@@ -10,6 +10,7 @@ type
   TRESTPost   = function(prHost, prResource: WideString; var prParams: TParams; var prProperties: TProperties; var prBody: TBody): TRESTResponse; stdcall;
   TRESTPut    = function(prHost, prResource: WideString; var prParams: TParams; var prProperties: TProperties; var prBody: TBody): TRESTResponse; stdcall;
   TRESTDelete = function(prHost, prResource: WideString; var prParams: TParams; var prProperties: TProperties): TRESTResponse; stdcall;
+  TRESTPatch  = function(prHost, prResource: WideString; var prParams: TParams; var prProperties: TProperties; var prBody: TBody): TRESTResponse; stdcall;
 
   TRESTRequestD7 = class
   private
@@ -33,6 +34,7 @@ type
     function Post(prURL, prResource: WideString): Boolean;
     function Put(prURL, prResource: WideString): Boolean;
     function Delete(prURL, prResource: WideString): Boolean;
+    function Patch(prURL, prResource: WideString): Boolean;
 
     property Params: TParams            read fParams                    write fParams;
     property Response: TRESTResponse    read fResponse;
@@ -199,5 +201,31 @@ begin
       MessageDlg('Erro requisição: '+e.Message,mtError,[mbOK],0);
   end;
 end;
+
+function TRESTRequestD7.Patch(prURL, prResource: WideString): Boolean;
+var
+  fPatch: TRESTPatch;
+begin
+  Result := False;
+  ClearResponse;
+  if (fHandle = 0) then
+  begin
+    MessageDlg('Erro ao carregar dll RESTRequest!',mtError,[mbOK],0);
+    Exit;
+  end;
+
+  try
+    @fPatch := GetProcAddress(fHandle,'Patch');
+    if Assigned(fPatch) then
+    begin
+      fResponse := fPatch(prURL,prResource,fParams,fProperties,fBody);
+      Result := True;
+    end;
+  except
+    on e:Exception do
+      MessageDlg('Erro requisição: '+e.Message,mtError,[mbOK],0);
+  end;
+end;
+
 
 end.
