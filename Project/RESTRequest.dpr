@@ -33,7 +33,7 @@ begin
 
       fRESTRequest.Params.Clear;
       for I := Low(prParams) to High(prParams) do
-        fRESTRequest.AddParameter(prParams[i].Name,prParams[i].Value,TRESTRequestParameterKind(prParams[i].Kind));
+        fRESTRequest.AddParameter(prParams[i].Name,prParams[i].Value,TRESTRequestParameterKind(prParams[i].Kind),[poDoNotEncode]);
 
       fRESTRequest.Execute;
 
@@ -192,7 +192,7 @@ begin
 
       fRESTRequest.Params.Clear;
       for I := Low(prParams) to High(prParams) do
-        fRESTRequest.AddParameter(prParams[i].Name,prParams[i].Value,TRESTRequestParameterKind(prParams[i].Kind));
+        fRESTRequest.AddParameter(prParams[i].Name,prParams[i].Value,TRESTRequestParameterKind(prParams[i].Kind),[poDoNotEncode]);
 
       fRESTRequest.Execute;
 
